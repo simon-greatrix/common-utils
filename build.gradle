@@ -21,9 +21,10 @@ apply plugin: 'maven'
 apply plugin: 'org.sonarqube'
 
 group 'com.pippsford'
-if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag && gitVersion() ==~ /^\d+(\.\d+)+(-.+)?$/ ) {
+if ( (versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag && gitVersion() ==~ /^\d+(\.\d+)+(-.+)?$/ ) {
   project.version = gitVersion()
 } else {
+  print versionDetails()
   project.version = '100-SNAPSHOT'
 }
 
