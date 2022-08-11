@@ -43,6 +43,10 @@ public class StringUtils {
   /**
    * Prevent CRLF injection. We may actually want a multi-line log message so our current implementation is to indent subsequent lines. We also replace
    * control codes and similar with the unicode replacement character.
+   *
+   * @param input the text to make safe for a log
+   *
+   * @return safe text
    */
   @SuppressWarnings("squid:S3776") // No refactoring is known to simplify this
   @Nonnull

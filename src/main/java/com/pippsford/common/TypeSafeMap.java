@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A map with type specific getters.
  *
@@ -403,6 +405,7 @@ public class TypeSafeMap extends AbstractMap<String, Object> {
   }
 
 
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public TypeSafeMap(Map<String, Object> map) {
     this.map = map;
   }

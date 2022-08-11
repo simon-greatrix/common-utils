@@ -7,10 +7,9 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import com.pippsford.util.ConcurrentWeakValueMap;
 import com.pippsford.util.FileLockHelper.LockingFile;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Implementation of the unique file handling.
@@ -70,6 +69,9 @@ public class UniqueFilesImpl implements UniqueFiles {
       realPath = path.toRealPath();
     } else {
       Path parent = path.getParent();
+      if (parent == null) {
+        throw new IOException("Cannot create a file system root: " + path);
+      }
       if (!Files.exists(parent)) {
         Files.createDirectories(parent);
       }

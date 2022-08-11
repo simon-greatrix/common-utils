@@ -22,6 +22,7 @@ public class UncheckedCheckedException extends RuntimeException {
   /**
    * New instance.
    *
+   * @param message   an additional message
    * @param throwable the checked exception
    */
   public UncheckedCheckedException(String message, Exception throwable) {

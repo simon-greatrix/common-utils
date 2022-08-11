@@ -3,6 +3,8 @@ package com.pippsford.util;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Representation of the time and sequence used to generate Type-1 UUIDs.
  */
@@ -42,6 +44,7 @@ final class UuidTime {
    *
    * @param random RNG
    */
+  @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
   static synchronized void init(final Random random) {
     if (isInitDone) {
       return;

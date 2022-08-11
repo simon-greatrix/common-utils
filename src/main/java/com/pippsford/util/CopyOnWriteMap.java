@@ -11,6 +11,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * A Map which can be read concurrently and allows for updates. The map that is being read from is never updated directly, so read operations are thread-safe
  * and multi-threading, whilst write operations are single threaded.
@@ -56,7 +58,11 @@ public class CopyOnWriteMap<K, V> implements ConcurrentMap<K, V> {
   }
 
 
-  /** Create a CopyOnWriteMap. */
+  /**
+   * Create a CopyOnWriteMap.
+   *
+   * @param mapCreator A supplier of new backing maps, which takes a predicted capacity and returns an empty mutable map instance.
+   */
   public CopyOnWriteMap(Function<Integer, Map<K, V>> mapCreator) {
     this.mapCreator = mapCreator;
     map = mapCreator.apply(-1);
@@ -80,6 +86,7 @@ public class CopyOnWriteMap<K, V> implements ConcurrentMap<K, V> {
    * @param initialMap the initial map
    * @param mapCreator the new map creator
    */
+  @SuppressFBWarnings("EI_EXPOSE_REP2")
   public CopyOnWriteMap(Map<K, V> initialMap, Function<Integer, Map<K, V>> mapCreator) {
     map = initialMap;
     this.mapCreator = mapCreator;

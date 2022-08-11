@@ -50,9 +50,10 @@ public class GenericBase32 implements Converter {
   /**
    * Create a new generic Base 32 converter.
    *
-   * @param chars   the character to use. Must be all of one case.
-   * @param pad     the padding character, if any
-   * @param mustPad whether encoding must be padded
+   * @param chars       the character to use. Must be all of one case.
+   * @param pad         the padding character, if any
+   * @param preferUpper if true, prefer upper case characters
+   * @param mustPad     whether encoding must be padded
    */
   public GenericBase32(char[] chars, char pad, boolean preferUpper, boolean mustPad) {
     this.chars = chars.clone();

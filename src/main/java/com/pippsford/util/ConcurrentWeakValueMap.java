@@ -30,6 +30,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Simon Greatrix
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ConcurrentWeakValueMap<K, V> implements ConcurrentMap<K, V> {
 
   /**

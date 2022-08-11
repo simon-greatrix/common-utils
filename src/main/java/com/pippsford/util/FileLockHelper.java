@@ -33,6 +33,8 @@ public class FileLockHelper {
     /**
      * Get the absolute path of the lock file.
      *
+     * @return the path
+     *
      * @throws UnsupportedOperationException if the lock file is not on the default file system
      */
     String getPath();
@@ -54,7 +56,11 @@ public class FileLockHelper {
     Path getProtectedPath();
 
 
-    /** Get the URI of the lock file. */
+    /**
+     * Get the URI of the lock file.
+     *
+     * @return the URI
+     */
     URI getUri();
 
 
@@ -62,6 +68,9 @@ public class FileLockHelper {
      * Lock the file.
      *
      * @param shared if true, the lock is shared
+     *
+     * @throws InterruptedException if interrupted while trying to acquire the lock
+     * @throws IOException          if there is an I/O problem with the lock
      */
     void lock(boolean shared) throws InterruptedException, IOException;
 
@@ -73,6 +82,9 @@ public class FileLockHelper {
      * @param timeout the number of milliseconds to wait for the lock
      *
      * @return true if the lock was acquired
+     *
+     * @throws InterruptedException if interrupted while trying to acquire the lock
+     * @throws IOException          if there is an I/O problem with the lock
      */
     boolean tryLock(boolean shared, int timeout) throws InterruptedException, IOException;
 
@@ -123,6 +135,8 @@ public class FileLockHelper {
    *             path and name with ".lock" appended
    *
    * @return a LockingFile object for the resource.
+   *
+   * @throws IOException if the locking file cannot be established
    */
   public static LockingFile getLockingFile(File file) throws IOException {
     return UniqueFilesMBean.getLockingFile(file);
@@ -137,6 +151,8 @@ public class FileLockHelper {
    *             path and name with ".lock" appended
    *
    * @return a LockingFile object for the resource.
+   *
+   * @throws IOException if the locking file cannot be established
    */
   public static LockingFile getLockingFile(Path path) throws IOException {
     return UniqueFilesMBean.getLockingFile(path);

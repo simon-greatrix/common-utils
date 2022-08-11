@@ -19,6 +19,8 @@ public interface UniqueFiles {
    * @param path the file's path
    *
    * @return the singleton canonical file instance
+   *
+   * @throws IOException if the locking file cannot be established
    */
   File getCanonicalFile(File path) throws IOException;
 
@@ -30,6 +32,8 @@ public interface UniqueFiles {
    * @param path the file's path
    *
    * @return the singleton canonical file instance
+   *
+   * @throws IOException if the file cannot be identified
    */
   File getCanonicalFile(String path) throws IOException;
 
@@ -41,6 +45,8 @@ public interface UniqueFiles {
    * @param path the file's path
    *
    * @return the singleton canonical file instance
+   *
+   * @throws IOException if the locking file cannot be established
    */
   LockingFile getLockingFile(Path path) throws IOException;
 

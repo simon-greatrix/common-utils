@@ -73,6 +73,7 @@ public class CriticalTask<V> extends Thread {
    * Execute a critical task. If the calling thread is interrupted, it will not stop but its interrupted status will be set on exit.
    *
    * @param <V>  the return type
+   * @param name the name of this task
    * @param task the task
    *
    * @return the output of the task

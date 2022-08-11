@@ -13,11 +13,10 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.pippsford.util.FileLockHelper.LockingFile;
 import com.pippsford.util.SimpleInvocationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bean to access the UniqueFiles singleton.
@@ -44,6 +43,8 @@ public class UniqueFilesMBean {
    * @param path the file path
    *
    * @return the canonical file
+   *
+   * @throws IOException if the canonical file cannot be established
    */
   public static CanonicalFile getCanonicalFile(String path) throws IOException {
     try {
@@ -69,6 +70,8 @@ public class UniqueFilesMBean {
    * @param file the file
    *
    * @return the canonical file
+   *
+   * @throws IOException if the locking file cannot be established
    */
   public static CanonicalFile getCanonicalFile(File file) throws IOException {
     try {
@@ -96,6 +99,8 @@ public class UniqueFilesMBean {
    *             path and name with ".lock" appended
    *
    * @return a LockingFile object for the resource.
+   *
+   * @throws IOException if the locking file cannot be established
    */
   public static LockingFile getLockingFile(File file) throws IOException {
     return getLockingFile(file.toPath());
@@ -110,6 +115,8 @@ public class UniqueFilesMBean {
    *             path and name with ".lock" appended
    *
    * @return a LockingFile object for the resource.
+   *
+   * @throws IOException if the locking file cannot be established
    */
   public static LockingFile getLockingFile(Path path) throws IOException {
     Object lf;

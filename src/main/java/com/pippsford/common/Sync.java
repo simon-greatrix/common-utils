@@ -101,6 +101,8 @@ public class Sync<V> {
    * Wait for the value held by this to match a given condition.
    *
    * @param condition the condition to match
+   *
+   * @throws InterruptedException if interrupted
    */
   public void waitFor(Predicate<V> condition) throws InterruptedException {
     synchronized (this) {

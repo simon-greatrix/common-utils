@@ -9,11 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 
+import com.pippsford.util.FileLockHelper.LockingFile;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pippsford.util.FileLockHelper.LockingFile;
 
 /**
  * <p>A safe file output stream.</p>
@@ -158,6 +157,9 @@ public class SafeFileOutputStream extends OutputStream {
     if ((!overwrite) && Files.exists(path)) {
       return null;
     }
+    if (path.getParent() == null) {
+      throw new IOException("Cannot write a file with the name of a file system root: " + path);
+    }
     // create output steam
     SafeFileOutputStream fos = new SafeFileOutputStream(path);
     // if not over-writing and file exists, then another process has
@@ -178,6 +180,8 @@ public class SafeFileOutputStream extends OutputStream {
    * @param file file to test
    *
    * @return one of COMPLETE, MISSING, IN_PROGRESS or FAILED
+   *
+   * @throws IOException if the file cannot be accessed
    */
   public static Progress testFile(File file) throws IOException {
     return testFile(file.toPath());
@@ -191,6 +195,8 @@ public class SafeFileOutputStream extends OutputStream {
    * @param path path to test
    *
    * @return one of COMPLETE, MISSING, IN_PROGRESS or FAILED
+   *
+   * @throws IOException if the file cannot be accessed
    */
   public static Progress testFile(Path path) throws IOException {
     // if file exists, it is complete
@@ -231,6 +237,9 @@ public class SafeFileOutputStream extends OutputStream {
    * @param file file to test
    *
    * @return true if the file is complete, false if it is missing
+   *
+   * @throws InterruptedException if this thread is interrupted whilst it is waiting
+   * @throws IOException          if there is a problem with the file
    */
   public static boolean waitFor(File file) throws InterruptedException, IOException {
     // if file already exists, no need to wait
@@ -274,6 +283,10 @@ public class SafeFileOutputStream extends OutputStream {
 
   @SuppressFBWarnings("PATH_TRAVERSAL_IN")
   private SafeFileOutputStream(Path path) throws IOException {
+    Path parent = path.getParent();
+    if (parent == null) {
+      throw new IOException("Cannot write a file with the name of a file system root: " + path);
+    }
     destinationFile = path;
     lockingFile = FileLockHelper.getLockingFile(path);
     try {
@@ -286,7 +299,7 @@ public class SafeFileOutputStream extends OutputStream {
     }
     Path temp = null;
     try {
-      temp = Files.createTempFile(path.getParent(), TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
+      temp = Files.createTempFile(parent, TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
       outputStream = Files.newOutputStream(temp);
     } catch (IOException e) {
       if (temp != null) {
@@ -325,6 +338,8 @@ public class SafeFileOutputStream extends OutputStream {
    * destination.
    *
    * @param commit if true, commit data to destination
+   *
+   * @throws IOException if closing the stream or relocating the holding file fails
    */
   public void close(boolean commit) throws IOException {
     if (outputStream == null) {
@@ -436,6 +451,8 @@ public class SafeFileOutputStream extends OutputStream {
    *
    * @param in  input stream to copy
    * @param buf buffer to use whilst copying
+   *
+   * @throws IOException if there is a problem with the transfer
    */
   public void transferFrom(InputStream in, byte[] buf) throws IOException {
     if (buf == null) {
