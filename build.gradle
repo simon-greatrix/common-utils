@@ -78,6 +78,13 @@ task sourceJar(type: Jar) {
   from sourceSets.main.allJava
 }
 
+signing {
+  useGpgCmd()
+  sign configurations.archives
+}
+
+
+
 // Upload to Maven Central
 uploadArchives {
   repositories {
