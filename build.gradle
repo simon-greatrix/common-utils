@@ -27,6 +27,7 @@ if ( (versionDetails().branchName ==~ /^(main)|(master)|(release.*)|(patch.*)$/)
   print versionDetails()
   project.version = '100-SNAPSHOT'
 }
+project.version='1.15'
 
 checkstyle {
   toolVersion = "8.41.1"
@@ -93,11 +94,11 @@ uploadArchives {
       beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
       repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
+        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
       }
 
       snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
+        authentication(userName: ossrhUsernamePippsford, password: ossrhPasswordPippsford)
       }
 
       pom.project {
