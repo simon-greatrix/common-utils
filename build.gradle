@@ -1,0 +1,125 @@
+buildscript {
+  dependencies {
+    classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
+  }
+}
+
+plugins {
+  id 'checkstyle'
+  id "com.github.spotbugs" version "2.0.0"
+  id 'com.palantir.git-version' version '0.12.3'
+  id 'signing'
+  id 'java'
+  id 'maven-publish'
+}
+
+
+apply plugin: 'com.github.spotbugs'
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
+apply plugin: 'maven'
+apply plugin: 'org.sonarqube'
+
+group 'com.pippsford'
+if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag && gitVersion() ==~ /^\d+(\.\d+)+(-.+)?$/ ) {
+  project.version = gitVersion()
+} else {
+  project.version = '100-SNAPSHOT'
+}
+
+checkstyle {
+  toolVersion = "8.41.1"
+  configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+checkstyleTest {
+  enabled = false
+}
+
+spotbugs {
+  toolVersion = '3.1.12'
+  sourceSets = [sourceSets.main]
+  ignoreFailures = true
+  reportsDir = file("$project.buildDir/findbugsReports")
+}
+
+task findSecurityBugs(type: com.github.spotbugs.SpotBugsTask) {
+  classes = fileTree(project.rootDir.absolutePath).include("**/*.class");
+  source = fileTree(project.rootDir.absolutePath).include("**/*.java");
+  classpath = files()
+  pluginClasspath = project.configurations.spotbugsPlugins
+}
+
+jacoco {
+  toolVersion = "0.8.2"
+}
+
+repositories {
+  //Allow local repository for snapshot builds
+  if (version.endsWith("SNAPSHOT")) {
+    mavenLocal()
+  }
+  mavenCentral()
+}
+
+dependencies {
+  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
+  compile group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: '4.7.1'
+
+  compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+  compile group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
+
+  testCompile group: 'junit', name: 'junit', version: '4.13.2'
+  testCompile group: 'org.mockito', name: 'mockito-core', version: '4.6.1'
+  testCompile group: 'com.google.jimfs', name: 'jimfs', version: '1.1'
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
+}
+
+// Upload to Maven Central
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Pippsford Common Utilities'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'Code that seems to me to have utility across multiple projects'
+        url 'https://github.com/simon-greatrix/common-utils'
+
+        scm {
+          connection 'scm:git:https://github.com/simon-greatrix/common-utils'
+          developerConnection 'scm:git:https://github.com/simon-greatrix/common-utils'
+          url 'https://github.com/simon-greatrix/common-utils'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'simon-greatrix'
+            name 'Simon Greatrix'
+            email 'simon@pippsford.com'
+          }
+        }
+      }
+    }
+  }
+}
